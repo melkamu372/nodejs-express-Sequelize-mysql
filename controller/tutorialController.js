@@ -1,6 +1,6 @@
-const asyncHandler = require("express-async-handler");
 const db = require("../model/db");
 const AppError = require("../utils/appError");
+const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 
@@ -52,23 +52,18 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res,next) => {
+exports.findOne = catchasyncHandler(async(req, res,next) => {
+  //console.log(process.env.PORT);
   const id = req.params.id;
-  Tutorial.findByPk(id)
-    .then(data => {
-      if (data) {
-        res.send(data);
-      } else {
-        throw new AppError(`Cannot find Tutorial with id=${id}.`,404);
-      }
-    })
-    .catch(err => {
-      // res.status(500).send({
-      //   message: "Error retrieving Tutorial with id=" + id
-      // });
-      next(err);
-    });
-};
+   await Tutorial.findByPk(id)
+      .then(data => {
+         if (data) {
+           res.send(data);
+            } else {
+          throw new AppError(`Cannot find Tutorial with id=${id}.`,404);
+         }
+       })
+});
 
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
