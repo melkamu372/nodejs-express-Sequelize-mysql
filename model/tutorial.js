@@ -1,15 +1,31 @@
 module.exports = (sequelize, Sequelize) => {
-    const Tutorial = sequelize.define("Tutorial", {
-      title: {
-        type: Sequelize.STRING
+  const Tutorial = sequelize.define("Tutorial", {
+    title: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: "",
+      validate: {
+        notEmpty: {
+          msg: "Title should be required",
+        }
       },
-      description: {
-        type: Sequelize.STRING
+      unique: {
+        msg: "Title must be unique",
       },
-      published: {
-        type: Sequelize.BOOLEAN
-      }
-    });
-  
-    return Tutorial;
-  };
+    },
+    description: {
+      type: Sequelize.STRING,
+      defaultValue: "",
+      validate: {
+        notEmpty: {
+          msg: "Description should be required",
+        },
+      },
+    },
+    published: {
+      type: Sequelize.BOOLEAN,
+    },
+  });
+
+  return Tutorial;
+};

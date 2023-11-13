@@ -15,6 +15,7 @@ app.use (bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 
 
+
 app.use (bodyParser.urlencoded({extended:true}));
 
 // import the db
@@ -25,6 +26,7 @@ const controllerMiddleWare = require('./utils/controllerMiddleWare.js');
 db.sequelize.sync({force: false}).then(() => {
   console.log("Drop and resync db."); 
     });
+
     
 //add route 
 
