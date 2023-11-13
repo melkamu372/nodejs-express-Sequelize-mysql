@@ -1,6 +1,5 @@
 
     const tutorials = require("../controller/tutorialController.js");
-    
     var router = require("express").Router();
     
     // Creating a new Tutorial
@@ -8,6 +7,7 @@
     
     // Retrieving all the Tutorials
     router.get("/", tutorials.findAll);
+  
     
     // Retrieving all the published Tutorials
     router.get("/published", tutorials.findAllPublished);

@@ -16,18 +16,16 @@ app.use (bodyParser.json());
 app.use (bodyParser.urlencoded({extended:true}));
 
 // import the db
-const db = require("./model");
+const db = require("./model/db.js");
+
 db.sequelize.sync({force: false}).then(() => {
   console.log("Drop and resync db."); 
     });
+    
 
-//simple route
-app.get ("/", (req, res) => {
-res.json({message: "Welcome to Turing.com"});
-});
 //add route 
 
-app.use("/api/contacts",require("./routes/tutorialRoutes.js"));
+app.use("/api",require("./routes/tutorialRoutes.js"));
 
 
 // set port, listen for requests
