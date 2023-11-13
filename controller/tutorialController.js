@@ -1,4 +1,6 @@
+const asyncHandler = require("express-async-handler");
 const db = require("../model/db");
+const AppError = require("../utils/appError");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 
@@ -50,23 +52,21 @@ exports.findAll = (req, res) => {
 };
 
 // Find a single Tutorial with an id
-exports.findOne = (req, res) => {
+exports.findOne = (req, res,next) => {
   const id = req.params.id;
-
   Tutorial.findByPk(id)
     .then(data => {
       if (data) {
         res.send(data);
       } else {
-        res.status(404).send({
-          message: `Cannot find Tutorial with id=${id}.`
-        });
+        throw new AppError(`Cannot find Tutorial with id=${id}.`,404);
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id
-      });
+      // res.status(500).send({
+      //   message: "Error retrieving Tutorial with id=" + id
+      // });
+      next(err);
     });
 };
 
@@ -96,7 +96,7 @@ exports.update = (req, res) => {
 };
 
 // Delete a Tutorial with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = (req, res,next) => {
   const id = req.params.id;
 
   Tutorial.destroy({
@@ -114,9 +114,10 @@ exports.delete = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
-      });
+      // res.status(500).send({
+      //   message: "Could not delete Tutorial with id=" + id
+      // });
+      next(err);
     });
 };
 
