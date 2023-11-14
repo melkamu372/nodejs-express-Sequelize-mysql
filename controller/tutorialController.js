@@ -3,6 +3,7 @@ const AppError = require("../utils/appError");
 const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
+const log = require('node-file-logger');
 // Create and Save a new Tutorial
 exports.create = catchasyncHandler(async(req, res) => {
   const tutorial = {
@@ -10,6 +11,7 @@ exports.create = catchasyncHandler(async(req, res) => {
     description: req.body.description,
     published: req.body.published || false,
   };
+
   // Save Tutorial in the database
   const data = await Tutorial.create(tutorial);
   res.send(data);
@@ -22,6 +24,7 @@ exports.findAll = catchasyncHandler(async(req, res) => {
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
   var data =await Tutorial.findAll({ where: condition });
     res.send(data);
+    log.Info(`data featch on ${process.env.running_environment} server ...`)
 });
 
 // Find a single Tutorial with an id
@@ -29,8 +32,10 @@ exports.findOne = catchasyncHandler(async(req, res,next) => {
   const id = req.params.id;
   const data = await Tutorial.findByPk(id);
   if (!data) {
-    throw new AppError(`Cannot find Tutorial with id=${id}.`, 404);
-     }
+    log.Info(`Cannot find Tutorial with id=${id}.`);
+     throw new AppError(`Cannot find Tutorial with id=${id}.`, 404);
+
+  }
   res.send(data);
 });
 
@@ -39,11 +44,11 @@ exports.update =catchasyncHandler(async (req, res) => {
   const id = req.params.id;
   const [num] = await Tutorial.update(req.body, { where: { id: id }, });
   if (num === 1) {
-    res.send({
-      message: "Tutorial was updated successfully.",
-    });
+    log.Info(`Tutorial with id=${id} was updated successfully.`);
+    res.send({message: "Tutorial was updated successfully.",});
   } 
   else {
+    log.Info(`Cannot update Tutorial with id=${id}.`);
     throw new AppError(`Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`, 404)
   }
 });

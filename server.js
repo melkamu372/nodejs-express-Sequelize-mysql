@@ -3,6 +3,8 @@ const limiter=require("./utils/rateLimit.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+//const console = require('./utils/logger').console;
+const log = require('node-file-logger');
 const app = express();
 var corsOptons = {
 	origin: "http://localhost:8080/"
@@ -31,5 +33,6 @@ app.use(controllerMiddleWare);
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
-console.log (`Server is running on port ${PORT}.` );
+  log.Info(`Server Running at ${PORT} on ${process.env.running_environment}...`);
+  console.log (`Server is running on port ${PORT}.`);
 });
