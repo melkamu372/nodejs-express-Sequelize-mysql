@@ -8,14 +8,14 @@ const loginUser = catchasyncHandler(async (req,res)=>{
   if (!username | !password) {
     throw new AppError(`All Fields are mandatory.`, 400);
   }
-  const response = await axios.post('http://10.1.85.11/AbayERP/webservices/wslogin', {
+  const response = await axios.post(process.env.LOGIN_API, {
     username,
     password,
   });
 
    if(response.data.message=="SUCCESS"){
        const accessToken=jwt.sign({
-           user:response.data    
+        user:response.data    
 }, 
   process.env.ACCESS_TOKEN_SECERET,
   {expiresIn:"1m"}
