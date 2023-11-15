@@ -1,12 +1,16 @@
 
     const tutorials = require("../controller/tutorialController.js");
+    const {loginUser} = require("../controller/userController.js");
+    const validateToken=require('../utils/validateTokenHandeler.js');
     var router = require("express").Router();
     
+     // Creating a new Tutorial
+     router.post("/login", loginUser);
     // Creating a new Tutorial
     router.post("/", tutorials.create);
     
     // Retrieving all the Tutorials
-    router.get("/", tutorials.findAll);
+    router.get("/", validateToken,tutorials.findAll);
   
     
     // Retrieving all the published Tutorials
