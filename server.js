@@ -20,9 +20,11 @@ const db = require("./model/db.js");
 const AppError = require("./utils/appError.js");
 const controllerMiddleWare = require('./utils/controllerMiddleWare.js');
 app.use(limiter);
-db.sequelize.sync({force: false}).then(() => {
-  console.log("Drop and resync db."); 
+
+db.sequelize.sync({alter:true}).then(() => {
+  console.log("Resync db changes to the database schema while preserving existing data"); 
     }); 
+
 //add route 
 app.use("/api",require("./routes/tutorialRoutes.js"));
 app.all('*',(req,res,next)=>{
