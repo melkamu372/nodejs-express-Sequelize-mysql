@@ -10,8 +10,8 @@
     router.post("/", tutorials.create);
     
     // Retrieving all the Tutorials
-    router.get("/", validateToken,tutorials.findAll);
-  
+   // router.get("/", validateToken,tutorials.findAll);
+     router.get("/",tutorials.findAll);
     
     // Retrieving all the published Tutorials
     router.get("/published", tutorials.findAllPublished);
