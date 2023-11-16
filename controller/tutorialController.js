@@ -2,6 +2,9 @@ const db = require("../model/db");
 const AppError = require("../utils/appError");
 const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
+const Comment = db.comments;
+const Instructor = db.instructors;
+const InsAddress = db.InsAddress;
 const Op = db.Sequelize.Op;
 const log = require('node-file-logger');
 // Create and Save a new Tutorial
@@ -26,6 +29,22 @@ exports.findAll = catchasyncHandler(async(req, res) => {
     res.send(data);
     log.Info(`data featch on ${process.env.running_environment} server ...`)
 });
+
+exports.findAllWithComent = catchasyncHandler(async(req, res) => {
+  const title = req.query.title;
+  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+  var data =await Tutorial.findAll({ where: condition,include: 
+    [Comment, {
+      model: Instructor,
+      include: [InsAddress],
+    }, 
+  ]
+  
+  });
+    res.send(data);
+    log.Info(`data featch on ${process.env.running_environment} server ...`)
+});
+
 
 // Find a single Tutorial with an id
 exports.findOne = catchasyncHandler(async(req, res,next) => {

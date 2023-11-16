@@ -28,15 +28,19 @@ db.sequelize = sequelize;
 
 // Import and invoke the tutorial model and pass in the sequelize and Sequelize objects
 db.tutorials = require("../model/tutorial.js")(sequelize, Sequelize);
+db.InsAddress = require("../model/instructor-address-model.js")(sequelize, Sequelize);
 db.comments = require("../model/comment-model.js")(sequelize, Sequelize);
 db.instructors = require("../model/instructor.js")(sequelize, Sequelize);
-
 // Define associations
 db.instructors.belongsTo(db.tutorials, { foreignKey: "instructorId" });
 db.tutorials.hasOne(db.instructors, { foreignKey: "instructorId" });
 
 db.comments.belongsTo(db.tutorials, { foreignKey: "tutorialId" });
 db.tutorials.hasMany(db.comments, { foreignKey: "tutorialId" });
+
+db.instructors.belongsTo(db.InsAddress, { foreignKey: "addressId" });
+db.InsAddress.hasOne(db.instructors, { foreignKey: "addressId" });
+
 
 // Sync the database to create or update the tables
 
