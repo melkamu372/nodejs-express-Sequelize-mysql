@@ -32,8 +32,8 @@ db.InsAddress = require("../model/instructor-address-model.js")(sequelize, Seque
 db.comments = require("../model/comment-model.js")(sequelize, Sequelize);
 db.instructors = require("../model/instructor.js")(sequelize, Sequelize);
 // Define associations
-db.instructors.belongsTo(db.tutorials, { foreignKey: "instructorId" });
-db.tutorials.hasOne(db.instructors, { foreignKey: "instructorId" });
+db.instructors.belongsTo(db.tutorials, { foreignKey: "tutorialId" });
+db.tutorials.hasOne(db.instructors, { foreignKey: "tutorialId" });
 
 db.comments.belongsTo(db.tutorials, { foreignKey: "tutorialId" });
 db.tutorials.hasMany(db.comments, { foreignKey: "tutorialId" });
