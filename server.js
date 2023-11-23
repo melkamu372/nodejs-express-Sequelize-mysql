@@ -21,7 +21,7 @@ const AppError = require("./utils/appError.js");
 const controllerMiddleWare = require('./utils/controllerMiddleWare.js');
 app.use(limiter);
 
-db.sequelize.sync({alter:true}).then(() => {
+db.sequelize.sync({force:false}).then(() => {
   console.log("Resync db changes to the database schema while preserving existing data"); 
     }); 
 

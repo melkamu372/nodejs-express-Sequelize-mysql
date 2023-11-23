@@ -24,7 +24,8 @@
     
     // Updating a Tutorial with ID
     router.put("/:id", tutorials.update);
-    
+    router.put("/update/data",tutorials.updateFromBody);
+   
     // Deleting a Tutorial with ID
     router.delete("/:id", tutorials.delete);
     

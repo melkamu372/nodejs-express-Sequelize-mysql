@@ -1,12 +1,7 @@
 const db = require("../model/db");
 const AppError = require("../utils/appError");
-const ApiFeatures=require("../utils/ApiFeatures")
 const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
-
-const Comment = db.comments;
-const Instructor = db.instructors;
-const InsAddress = db.InsAddress;
 const Op = db.Sequelize.Op;
 const log = require('node-file-logger');
 // Create and Save a new Tutorial
@@ -32,24 +27,6 @@ exports.findAll = catchasyncHandler(async(req, res) => {
     log.Info(`data featch on ${process.env.running_environment} server ...`)
 });
 
-exports.findAllWithComent = catchasyncHandler(async(req, res) => {
-  // const title = req.query.title;
-  // var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  // var  query =await Tutorial.findAll({ where: condition,include: 
-  //   [Comment, {
-  //     model: Instructor,
-  //     include: [InsAddress],
-  //   }, 
-  // ]
-  // });
-
-  const apiFeatures = new ApiFeatures(Tutorial, req.query);
-
-    const filteredData = apiFeatures.filter().model;
-    const data = await filteredData;
-     res.send(data);
-  log.Info(`data featch on ${process.env.running_environment} server ...`)
-});
 
 
 // Find a single Tutorial with an id
@@ -67,19 +44,6 @@ exports.findOne = catchasyncHandler(async(req, res,next) => {
 // Update a Tutorial by the id in the request
 exports.update =catchasyncHandler(async (req, res) => {
   const id = req.params.id;
-  const [num] = await Tutorial.update(req.body, { where: { id: id }, });
-  if (num === 1) {
-    log.Info(`Tutorial with id=${id} was updated successfully.`);
-    res.send({message: "Tutorial was updated successfully.",});
-  } 
-  else {
-    log.Info(`Cannot update Tutorial with id=${id}.`);
-    throw new AppError(`Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`, 404)
-  }
-});
-// accept id from body
-exports.updateFromBody =catchasyncHandler(async (req, res) => {
-  const id = req.body.id;
   const [num] = await Tutorial.update(req.body, { where: { id: id }, });
   if (num === 1) {
     log.Info(`Tutorial with id=${id} was updated successfully.`);
