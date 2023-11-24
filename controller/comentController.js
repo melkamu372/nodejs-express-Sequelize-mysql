@@ -2,9 +2,6 @@ const db = require("../model/db");
 const AppError = require("../utils/appError");
 const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
-const Comment = db.comments;
-const Instructor = db.instructors;
-const InsAddress = db.InsAddress;
 const Op = db.Sequelize.Op;
 const log = require('node-file-logger');
 // Create and Save a new Tutorial
@@ -30,65 +27,16 @@ exports.findAll = catchasyncHandler(async(req, res) => {
     log.Info(`data featch on ${process.env.running_environment} server ...`)
 });
 
-// exports.findAllWithComent = catchasyncHandler(async(req, res) => {
-//   const title = req.query.title;
-//   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-//   var data =await Tutorial.findAll({ where: condition,include: 
-//     [Comment,{
-//       model: Instructor,
-//       include: [InsAddress],
-//     }, 
-//   ],
-//   order: [['createdAt', 'DESC']],
-//   });
-//      res.send(data);
-//      log.Info(`data featch on ${process.env.running_environment} server ...`)
-// });
-
-
-exports.findAllWithComent = catchasyncHandler(async (req, res) => {
-  const title = req.query.title;
-  const page = parseInt(req.query.page) || 1; 
-  const limit = parseInt(req.query.limit) || 10; 
-  const offset = (page - 1) * limit; 
-  const condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  const { count, rows } = await Tutorial.findAndCountAll({
-    where: condition,
-    include: [
-      {
-        model: Comment,
-      },
-      {
-        model: Instructor,
-        include: [InsAddress],
-      },
-    ],
-    order: [['createdAt', 'DESC']],
-    limit: limit,
-    offset: offset,
-  });
-  const totalPages = Math.ceil(count / limit); 
-  res.send({
-    data: rows,
-    pagination: {
-      currentPage: page,
-      totalPages: totalPages,
-      totalRecords: count,
-    },
-  });
-  log.Info(`Data fetched on ${process.env.running_environment} server ...`);
-});
-
-
 
 
 // Find a single Tutorial with an id
 exports.findOne = catchasyncHandler(async(req, res,next) => {
   const id = req.params.id;
   const data = await Tutorial.findByPk(id);
-  if(!data) {
+  if (!data) {
     log.Info(`Cannot find Tutorial with id=${id}.`);
      throw new AppError(`Cannot find Tutorial with id=${id}.`, 404);
+
   }
   res.send(data);
 });
@@ -96,19 +44,6 @@ exports.findOne = catchasyncHandler(async(req, res,next) => {
 // Update a Tutorial by the id in the request
 exports.update =catchasyncHandler(async (req, res) => {
   const id = req.params.id;
-  const [num] = await Tutorial.update(req.body, { where: { id: id }, });
-  if (num === 1) {
-    log.Info(`Tutorial with id=${id} was updated successfully.`);
-    res.send({message: "Tutorial was updated successfully.",});
-  } 
-  else {
-    log.Info(`Cannot update Tutorial with id=${id}.`);
-    throw new AppError(`Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`, 404)
-  }
-});
-// accept id from body
-exports.updateFromBody =catchasyncHandler(async (req, res) => {
-  const id = req.body.id;
   const [num] = await Tutorial.update(req.body, { where: { id: id }, });
   if (num === 1) {
     log.Info(`Tutorial with id=${id} was updated successfully.`);

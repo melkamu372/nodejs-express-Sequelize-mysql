@@ -9,13 +9,14 @@ const sequelize = new Sequelize(
   {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
-    operationsAliases: false,
+    operatorsAliases: false,
     pool: {
       max: dbConfig.pool.max,
       min: dbConfig.pool.min,
       acquire: dbConfig.pool.acquire,
       idle: dbConfig.pool.idle
     }
+    ,logging: console.log
   }
 );
 
@@ -27,6 +28,21 @@ db.sequelize = sequelize;
 
 // Import and invoke the tutorial model and pass in the sequelize and Sequelize objects
 db.tutorials = require("../model/tutorial.js")(sequelize, Sequelize);
+db.InsAddress = require("../model/instructor-address-model.js")(sequelize, Sequelize);
+db.comments = require("../model/comment-model.js")(sequelize, Sequelize);
+db.instructors = require("../model/instructor.js")(sequelize, Sequelize);
+// Define associations
+db.instructors.belongsTo(db.tutorials, { foreignKey: "tutorialId" });
+db.tutorials.hasOne(db.instructors, { foreignKey: "tutorialId" });
+
+db.comments.belongsTo(db.tutorials, { foreignKey: "tutorialId" });
+db.tutorials.hasMany(db.comments, { foreignKey: "tutorialId" });
+
+db.instructors.belongsTo(db.InsAddress, { foreignKey: "addressId" });
+db.InsAddress.hasOne(db.instructors, { foreignKey: "addressId" });
+
+
+// Sync the database to create or update the tables
 
 // Export the db object
 module.exports = db;
