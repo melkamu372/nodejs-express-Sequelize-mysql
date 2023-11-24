@@ -13,7 +13,7 @@
    // router.get("/", validateToken,tutorials.findAll);
      router.get("/",tutorials.findAll);
 
-     router.get("/comment",tutorials.findAllWithComent);
+     router.get("/all",tutorials.findAllWithComent);
     
     
     // Retrieving all the published Tutorials

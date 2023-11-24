@@ -1,9 +1,7 @@
 const db = require("../model/db");
 const AppError = require("../utils/appError");
-const ApiFeatures=require("../utils/ApiFeatures")
 const catchasyncHandler = require("../utils/catchAsync");
 const Tutorial = db.tutorials;
-
 const Comment = db.comments;
 const Instructor = db.instructors;
 const InsAddress = db.InsAddress;
@@ -32,34 +30,65 @@ exports.findAll = catchasyncHandler(async(req, res) => {
     log.Info(`data featch on ${process.env.running_environment} server ...`)
 });
 
-exports.findAllWithComent = catchasyncHandler(async(req, res) => {
-  // const title = req.query.title;
-  // var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
-  // var  query =await Tutorial.findAll({ where: condition,include: 
-  //   [Comment, {
-  //     model: Instructor,
-  //     include: [InsAddress],
-  //   }, 
-  // ]
-  // });
+// exports.findAllWithComent = catchasyncHandler(async(req, res) => {
+//   const title = req.query.title;
+//   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+//   var data =await Tutorial.findAll({ where: condition,include: 
+//     [Comment,{
+//       model: Instructor,
+//       include: [InsAddress],
+//     }, 
+//   ],
+//   order: [['createdAt', 'DESC']],
+//   });
+//      res.send(data);
+//      log.Info(`data featch on ${process.env.running_environment} server ...`)
+// });
 
-  const apiFeatures = new ApiFeatures(Tutorial, req.query);
 
-    const filteredData = apiFeatures.filter().model;
-    const data = await filteredData;
-     res.send(data);
-  log.Info(`data featch on ${process.env.running_environment} server ...`)
+exports.findAllWithComent = catchasyncHandler(async (req, res) => {
+  const title = req.query.title;
+  const page = parseInt(req.query.page) || 1; 
+  const limit = parseInt(req.query.limit) || 10; 
+  const offset = (page - 1) * limit; 
+  const condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+  const { count, rows } = await Tutorial.findAndCountAll({
+    where: condition,
+    include: [
+      {
+        model: Comment,
+      },
+      {
+        model: Instructor,
+        include: [InsAddress],
+      },
+    ],
+    order: [['createdAt', 'DESC']],
+    limit: limit,
+    offset: offset,
+  });
+  const totalPages = Math.ceil(count / limit); 
+  res.send({
+    data: rows,
+    pagination: {
+      currentPage: page,
+      totalPages: totalPages,
+      totalRecords: count,
+    },
+  });
+  log.Info(`Data fetched on ${process.env.running_environment} server ...`);
 });
+
+
 
 
 // Find a single Tutorial with an id
 exports.findOne = catchasyncHandler(async(req, res,next) => {
   const id = req.params.id;
   const data = await Tutorial.findByPk(id);
-  if (!data) {
+  if(!data) {
     log.Info(`Cannot find Tutorial with id=${id}.`);
      throw new AppError(`Cannot find Tutorial with id=${id}.`, 404);
-
   }
   res.send(data);
 });
